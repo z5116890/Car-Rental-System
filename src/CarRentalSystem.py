@@ -1,4 +1,5 @@
 from src.Booking import Booking
+import re
 
 
 class CarRentalSystem:
@@ -11,7 +12,25 @@ class CarRentalSystem:
         """
         You will have to implement this method for Task 2
         """
-        pass
+        carName = ""
+        carModel = ""
+        if name is not None:
+            carName += name
+        if model is not None:
+            carModel += model
+        searchList = []
+        carName.replace(" ", "")
+        carModel.replace(" ","")
+        carName = carName.lower()
+        carModel = carModel.lower()
+
+        for car in self._cars:
+            print(car.get_name().lower(), carName)
+            if carName in car.get_name().lower() and carModel in car.get_model().lower():
+                searchList.append(car)
+
+        
+        return searchList
 
     def make_booking(self, customer, period, car, location):
         new_booking = Booking(customer, period, car, location)

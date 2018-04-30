@@ -12,10 +12,26 @@ def home():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    """
+	username = request.form.get('username', '')
+	customer = system.get_customer(username)
+	customer_name = customer.username
+	print(username)
+	print(customer_name)
+	if username == customer_name:
+			#match if password is existing in dictionary above.
+			password = request.form.get('password', '')
+			if not customer.validate_password(password):
+				print("wrong password")
+			#else it matches then go to user main page
+			else: 
+				print("login successful")
+				login_user(customer)
+				return redirect(url_for('cars'))
+
+	"""
     Task 1: complete this function
     """
-    return render_template('login.html')
+	return render_template('login.html')
 
 
 @app.route('/logout')
@@ -31,15 +47,19 @@ def page_not_found(e=None):
     return render_template('404.html'), 404
 
 
-@app.route('/cars')
+@app.route('/cars', methods=['GET', 'POST'])
 @login_required
 def cars():
     """
     Task 2: At the moment this endpoint does not do anything if a search
     is sent. It should filter the cars depending on the search criteria
     """
-    cars = system.cars # This line is deleted in the model solution
+    name = request.form.get('make', '')
+    model = request.form.get('model' '')
+    cars = system.car_search(name, model)
     return render_template('cars.html', cars=cars)
+    
+
 
 
 @app.route('/cars/<rego>')
@@ -81,6 +101,10 @@ def book(rego):
 @app.route('/cars/<rego>/bookings')
 @login_required
 def car_bookings(rego):
+    car = system.get_car(rego)
+    bookings = car.get_bookings()
+
+    return render_template('bookings.html', bookings=bookings)
     """
     Task 3: This should render a new template that shows a list of all
     the bookings associated with the car represented by 'rego'
